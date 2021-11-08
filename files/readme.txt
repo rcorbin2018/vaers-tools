@@ -1,0 +1,1 @@
+This 'files' directory is used as a work directory for vaers tools.
