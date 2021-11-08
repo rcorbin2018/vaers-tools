@@ -1,7 +1,7 @@
 # vaers-tools
 
-<details>
-  <summary>GetCSVColumnInfo Tool - Click to expand</summary>
+<details open>
+  <summary>GetCSVColumnInfo Tool</summary>
   
 ## GetCSVColumnInfo
   Tool that creates a set of column name and field length files to be used to create based     relational database tables

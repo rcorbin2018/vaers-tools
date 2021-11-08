@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -116,16 +118,32 @@ public class GetCSVColumnInfo {
 		return prop;
 	}
 	
+	public static void copyFilesFromTo(String fromDir, String toDir) {
+		try {
+			File outputDir = new File(toDir);
+	        if (!outputDir.exists()) {
+	        	outputDir.mkdirs();
+			}
+	        File src = new File(fromDir);
+	        File dest = new File(toDir);
+	        FileUtils.copyDirectory(src, dest);
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		Properties propertiesFile = readPropertiesFile("vaers-tools.properties");
 		String outputDirString = propertiesFile.getProperty("getCSVColumnInfo.outputDirString");
+		String outputDirStringCurrentFiles = "/" + getPath() + outputDirString + "/CurrentFiles/";
 		String dateTimeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm"));
-		outputDirString = "/" + getPath() + outputDirString + dateTimeStamp + "/";
+		String outputDirStringWithDate = "/" + getPath() + outputDirString + "/PreviousFiles/" + dateTimeStamp + "/";
 		String outputFileName = propertiesFile.getProperty("getCSVColumnInfo.outputFileName");
 		String inputDirString = "/" + getPath() + propertiesFile.getProperty("getCSVColumnInfo.inputDirString");
 		GetCSVColumnInfo getCSVColumnInfo = new GetCSVColumnInfo();
-		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirString, "VAERSDATA-" + outputFileName, inputDirString, "VAERSDATA");
-		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirString, "VAERSSYMPTOMS-" + outputFileName, inputDirString, "VAERSSYMPTOMS");
-		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirString, "VAERSVAX-" + outputFileName, inputDirString, "VAERSVAX");
+		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirStringCurrentFiles, "VAERSDATA-" + outputFileName, inputDirString, "VAERSDATA");
+		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirStringCurrentFiles, "VAERSSYMPTOMS-" + outputFileName, inputDirString, "VAERSSYMPTOMS");
+		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirStringCurrentFiles, "VAERSVAX-" + outputFileName, inputDirString, "VAERSVAX");
+		copyFilesFromTo(outputDirStringCurrentFiles, outputDirStringWithDate);
 	}
 }
