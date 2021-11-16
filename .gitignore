@@ -6,6 +6,6 @@
 /target/
 .DS_Store
 .settings/
-AllVAERSDataCSVS/
-GetCSVColumnInfo/
-CreateBaseTableSQL/
+files/*
+!files/readme.txt
+dependency-reduced-pom.xml

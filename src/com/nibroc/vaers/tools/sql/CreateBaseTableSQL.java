@@ -17,7 +17,7 @@ import com.nibroc.vaers.tools.common.CommonMethods;
 
 public class CreateBaseTableSQL {
 	
-	public static void readJsonFileAndCreateSQLFiles(String jsonFileLocation, String tableName, String sqlFileDirLocation) {
+	public static void readJsonFileAndCreateSQLFiles(String jsonFileLocation, String tableName, String sqlFileDirLocation, String dbType) {
 		FileWriter fileWriter = null;
 		PrintWriter printWriter = null;
 		JSONParser parser = new JSONParser();
@@ -26,22 +26,34 @@ public class CreateBaseTableSQL {
 			if(!newDir.exists()) {
 				newDir.mkdirs();
 			}
-			fileWriter = new FileWriter(sqlFileDirLocation + tableName + "-base-table.sql");
+			fileWriter = new FileWriter(sqlFileDirLocation + tableName + "-" + dbType + "-base-table.sql");
 			printWriter = new PrintWriter(fileWriter);
 			Object obj = parser.parse(new FileReader(jsonFileLocation));
 			JSONArray jsonArray = (JSONArray) obj;
 			Iterator<?> iteratorArray = jsonArray.iterator();
 			while (iteratorArray.hasNext()) {
 				JSONObject jsonObject = (JSONObject)iteratorArray.next();
-				printWriter.println("CREATE TABLE " + tableName + " (");
-				printWriter.println("VAERS_ID INT NOT NULL,");
+				String firstPartOfStatement = "CREATE TABLE " + tableName + " (VAERS_ID INT NOT NULL, ";
+				String middlePartOfStatement = "";
 				for(Iterator<?> iterator = jsonObject.keySet().iterator(); iterator.hasNext();) {
 				    String key = (String) iterator.next();
 				    //System.out.println(key + "= "+ jsonObject.get(key));
-				    printWriter.println(key + " VARCHAR(" + jsonObject.get(key) + "),");
+				    if(!key.equalsIgnoreCase("VAERS_ID")) {
+					    if(dbType.equalsIgnoreCase("mysql")) {
+					    	middlePartOfStatement = middlePartOfStatement +  key + " TEXT, ";
+					    } else {
+					    	middlePartOfStatement = middlePartOfStatement +  key + " VARCHAR(" + jsonObject.get(key) + "), ";
+					    }
+				    }
 				}
-				printWriter.println("PRIMARY KEY (VAERS_ID)");
-				printWriter.println(");");
+				String lastPartOfStatement = "";
+				if(tableName.equalsIgnoreCase("VAERSDATA")) {
+					lastPartOfStatement = lastPartOfStatement + "PRIMARY KEY (VAERS_ID));";
+				} else {
+					middlePartOfStatement = middlePartOfStatement.substring(0, middlePartOfStatement.length() - 2);
+					lastPartOfStatement = lastPartOfStatement + ");";
+				}
+				printWriter.println(firstPartOfStatement + middlePartOfStatement + lastPartOfStatement);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -62,7 +74,8 @@ public class CreateBaseTableSQL {
 		for (int j = 0; j < listOfCurrentFiles.size(); j++) {
 			String vaersDataFileName = listOfCurrentFiles.get(j).split("/")[listOfCurrentFiles.get(j).split("/").length - 1];
 			String tableName = vaersDataFileName.split("-")[0];
-			readJsonFileAndCreateSQLFiles(outputDirStringCurrentFiles + vaersDataFileName, tableName, outputDirSQLFile);
+			readJsonFileAndCreateSQLFiles(outputDirStringCurrentFiles + vaersDataFileName, tableName, outputDirSQLFile, "mysql");
+			readJsonFileAndCreateSQLFiles(outputDirStringCurrentFiles + vaersDataFileName, tableName, outputDirSQLFile, "h2");
 		}
 	}
 

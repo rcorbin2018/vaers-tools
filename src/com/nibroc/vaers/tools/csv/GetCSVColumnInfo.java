@@ -56,6 +56,7 @@ public class GetCSVColumnInfo {
 			        	}
 			        }
 			    }
+			    in.close();
 			}
 			list.add(obj);
 		    ObjectMapper mapper = new ObjectMapper();
@@ -73,7 +74,7 @@ public class GetCSVColumnInfo {
 		String dateTimeStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm"));
 		String outputDirStringWithDate = "/" + CommonMethods.getPath() + outputDirString + "/PreviousFiles/" + dateTimeStamp + "/";
 		String outputFileName = propertiesFile.getProperty("getCSVColumnInfo.outputFileName");
-		String inputDirString = "/" + CommonMethods.getPath() + propertiesFile.getProperty("getCSVColumnInfo.inputDirString");
+		String inputDirString = "/" + CommonMethods.getPath() + propertiesFile.getProperty("vaersCSVFilesDirString");
 		GetCSVColumnInfo getCSVColumnInfo = new GetCSVColumnInfo();
 		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirStringCurrentFiles, "VAERSDATA-" + outputFileName, inputDirString, "VAERSDATA");
 		getCSVColumnInfo.createColumnNamesAndLengthsFile(outputDirStringCurrentFiles, "VAERSSYMPTOMS-" + outputFileName, inputDirString, "VAERSSYMPTOMS");
