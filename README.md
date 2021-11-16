@@ -48,11 +48,11 @@
      - docker pull mysql
      - docker run -p 3307:3306 --name vaers-mysql -e MYSQL_ROOT_PASSWORD=admin -d mysql:latest
      - mysql -u root -h 127.0.0.1 -P 3307 -p -e "CREATE DATABASE vaers"
-     - cd to <CreateBaseTableSQL> directory
+     - cd to CreateBaseTableSQL sql file directory
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSDATA-mysql-base-table.sql
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSSYMPTOMS-mysql-base-table.sql
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSVAX-mysql-base-table.sql
-     - cd to <CreatePopulateBaseTablesSQL> directory
+     - cd to CreatePopulateBaseTablesSQL sql file directory
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSDATA-table-inserts.sql
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSSYMPTOMS-table-inserts.sql
      - mysql -u root -h 127.0.0.1 -P 3307 vaers -p < VAERSVAX-table-inserts.sql
