@@ -40,7 +40,11 @@ public class CreateBaseTableSQL {
 				    //System.out.println(key + "= "+ jsonObject.get(key));
 				    if(!key.equalsIgnoreCase("VAERS_ID")) {
 					    if(dbType.equalsIgnoreCase("mysql")) {
-					    	middlePartOfStatement = middlePartOfStatement +  key + " TEXT, ";
+					    	if(key.contains("DATE")) {
+					    		middlePartOfStatement = middlePartOfStatement +  key + " DATE, ";
+					    	} else {
+					    		middlePartOfStatement = middlePartOfStatement +  key + " TEXT, ";
+					    	}
 					    } else {
 					    	middlePartOfStatement = middlePartOfStatement +  key + " VARCHAR(" + jsonObject.get(key) + "), ";
 					    }

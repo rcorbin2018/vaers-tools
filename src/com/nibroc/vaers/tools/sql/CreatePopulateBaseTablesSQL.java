@@ -52,12 +52,20 @@ public class CreatePopulateBaseTablesSQL {
 				    		if(i == 0) {
 				    			values = values + rowList.get(i) + ", ";
 				    		} else {
-				    			values = values + "'" + escapeString(rowList.get(i)) + "', ";
+				    			if(fieldNames.get(i).contains("DATE")) {
+				    				values = values + convertDateString(rowList.get(i)) + ", ";
+				    			} else {
+				    				values = values + "'" + escapeString(rowList.get(i)) + "', ";
+				    			}
 				    		}
 			    		}
 			    		if(rowList.size() == i || allFieldsLastOne) {
 			    			columns = columns + fieldNames.get(i);
-			    			values = values + "'" + escapeString(rowList.get(i - 1)) + "'";
+			    			if(fieldNames.get(i).contains("DATE")) {
+			    				values = values + convertDateString(rowList.get(i - 1));
+			    			} else {
+			    				values = values + "'" + escapeString(rowList.get(i - 1)) + "'";
+			    			}
 			    		}
 			    	}
 			    	insertStatement = insertStatement + columns + ") VALUES " + values + ");";
@@ -79,6 +87,16 @@ public class CreatePopulateBaseTablesSQL {
 											.replaceAll(";", "")
 											.replaceAll("\\\\", "/");
 		return returnEscapedString;
+	}
+	
+	public static String convertDateString(String stringToConvert) {
+		String returnConvertedString = "";
+		if(stringToConvert != null && stringToConvert.trim().length() == 0) {
+			return "NULL";
+		}
+		String[] splitDateArray = stringToConvert.split("/");
+		returnConvertedString = splitDateArray[2] + "-" + splitDateArray[0] + "-" + splitDateArray[1];
+		return "'" + returnConvertedString + "'";
 	}
 	
 	public static void main(String[] args) throws Exception {
